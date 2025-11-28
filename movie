@@ -1,0 +1,98 @@
+# # # Importing essential modules
+# # from PyQt6 import QtWidgets, uic
+# # from PyQt6.QtCore import QDate
+# # from PyQt6.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, QHeaderView
+# # import sys
+# # import pyodbc
+# # import os
+# # # Replace these with your own database connection details
+# # os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "0"
+# # os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "0"
+# # os.environ["QT_SCALE_FACTOR"] = "1"
+# # server = 'localhost'
+# # database = 'Cinema_booking_system'  # Name of your Northwind database
+# # use_windows_authentication = True  # Set to True to use Windows Authentication
+# # username = 'your_username'  # Specify a username if not using Windows Authentication
+# # password = 'your_password'  # Specify a password if not using Windows Authentication
+
+# # class MainWindow(QtWidgets.QMainWindow):
+# #     def __init__(self):
+# #         super().__init__()
+# #         self.setupUi(self)
+
+# #         # Connect "Manage My Bookings" button
+# #         self.manageButton.clicked.connect(self.open_manage_bookings)
+
+# #     def open_manage_bookings(self):
+# #         self.manage_bookings = manage()
+# #         self.manage_bookings.show()
+
+# # class manage(QtWidgets.QMainWindow):
+# #     def __init__(self):
+# #         # Call the inherited classes __init__ method
+# #         super(manage, self).__init__()
+
+# #         # Load the .ui file
+# #         uic.loadUi('movie.ui', self)
+
+# # def main():
+# #     app = QApplication(sys.argv)
+# #     window = MainWindow()
+# #     window.show()
+# #     sys.exit(app.exec())
+
+
+# # if __name__ == "__main__":
+# #     main()
+
+
+from PyQt6 import QtWidgets, uic
+from PyQt6.QtWidgets import QApplication
+import sys
+import os
+
+os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
+os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "1"
+os.environ["QT_SCALE_FACTOR"] = "0.9"
+
+class MainWindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        # Load MAIN SCREEN UI
+        uic.loadUi("newmovie3.ui", self)
+
+
+        # Explicitly find the button by objectName
+        self.manageButton = self.findChild(QtWidgets.QPushButton, "manageButton")
+        if self.manageButton is None:
+            print("Error: manageButton not found!")
+
+        else:
+            self.manageButton.clicked.connect(self.open_manage_bookings)
+        
+
+
+    # <- This method should NOT be inside __init__
+    def open_manage_bookings(self):
+        self.manage_bookings = ManageWindow()
+        self.manage_bookings.show()
+
+
+class ManageWindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        # Load the VIEW RECORDS / MANAGE BOOKINGS UI
+        uic.loadUi("manage_bookings.ui", self)
+
+
+def main():
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec())
+
+
+if __name__ == "__main__":
+    main()
