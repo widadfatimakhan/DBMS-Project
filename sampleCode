@@ -1,0 +1,334 @@
+from PyQt6 import QtWidgets, uic
+from PyQt6.QtWidgets import QApplication, QTableWidgetItem, QHeaderView, QMessageBox
+import sys
+import os
+import pyodbc 
+
+# Database Connection Details 
+server = 'localhost'
+database = 'Cinema_booking_system' 
+use_windows_authentication = True
+username = 'your_username'
+password = 'your_password'
+
+# Set up scaling
+os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "0.5"
+os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "1"
+os.environ["QT_SCALE_FACTOR"] = "1.3"
+
+def create_connection_string():
+    """Builds the pyodbc connection string."""
+    if use_windows_authentication:
+        return (
+            f'DRIVER={{ODBC Driver 17 for SQL Server}};'
+            f'SERVER={server};'
+            f'DATABASE={database};'
+            f'Trusted_Connection=yes;'
+        )
+    else:
+        return (
+            f'DRIVER={{ODBC Driver 17 for SQL Server}};'
+            f'SERVER={server};'
+            f'DATABASE={database};'
+            f'UID={username};'
+            f'PWD={password};'
+        )
+
+# --- Main Window ---
+class MainWindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        # Load newmovie.ui
+        try:
+            uic.loadUi("newmovie.ui", self)
+        except Exception as e:
+            QMessageBox.critical(self, "UI Load Error", 
+                                 f"Could not load UI file 'newmovie.ui'. Is it in the same directory?\nError: {e}")
+            sys.exit(1)
+
+        # Find the button on the main screen
+        self.manageButton = self.findChild(QtWidgets.QPushButton, "manageButton")
+        if self.manageButton:
+            self.manageButton.clicked.connect(self.open_manage_bookings)
+        else:
+            print("Error: 'manageButton' not found in newmovie.ui! Check the object name in Qt Designer.") 
+
+    def open_manage_bookings(self):
+        """Opens the Manage Bookings window."""
+        self.manage_bookings = ManageWindow()
+        self.manage_bookings.show()
+
+#Records Customer Window 
+
+class RecordsCustomerWindow(QtWidgets.QMainWindow):
+    def __init__(self, customer_name="", customer_email=""):
+        super().__init__()
+
+        # Load the records_customer.ui
+        try:
+            uic.loadUi("records_customer.ui", self)
+        except Exception as e:
+            QMessageBox.critical(self, "UI Load Error", 
+                                 f"Could not load UI file 'records_customer.ui'. Is it in the same directory?\nError: {e}")
+            sys.exit(1)
+
+        # Store customer details
+        self.customer_name = customer_name
+        self.customer_email = customer_email
+        
+        # Find the QTableWidget
+        self.recordsTable = self.findChild(QtWidgets.QTableWidget, "recordsTable")
+        if self.recordsTable is None:
+            print("Error: QTableWidget not found in records_customer.ui!")
+        
+        # Find the Return Button
+        self.returnButton = self.findChild(QtWidgets.QPushButton, "returnButton")
+        if self.returnButton:
+            self.returnButton.clicked.connect(self.close_window)
+        
+        # Find the Cancel Booking Button
+        self.cancelButton = self.findChild(QtWidgets.QPushButton, "cancelButton")
+        if self.cancelButton:
+            self.cancelButton.clicked.connect(self.cancel_booking)
+        
+        # Load customer booking data
+        self.load_customer_bookings()
+    
+    def close_window(self):
+        """Closes the current RecordsCustomerWindow."""
+        self.close()
+    
+    def load_customer_bookings(self):
+        """Connects to the database and populates the table with customer-specific bookings."""
+        if not self.recordsTable:
+            return
+
+        conn_str = create_connection_string()
+        try:
+            conn = pyodbc.connect(conn_str)
+            cursor = conn.cursor()
+            
+            # Build the query
+            query = """
+            SELECT 
+                C.Customer_Name, 
+                B.BookingID, 
+                M.Movie_Name, 
+                T.Date, 
+                B.Time, 
+                B.No_Of_Tickets,
+                T.Booking_Status
+            FROM 
+                Customer C
+                JOIN Bookings B ON C.Customer_Email = B.Customer_Email
+                JOIN Movies M ON B.Movie_Name = M.Movie_Name
+                JOIN Tickets T ON B.BookingID = T.BookingID
+            WHERE 1=1
+            """
+            
+            params = []
+            
+            # Add conditions based on what was entered
+            if self.customer_name:
+                query += " AND C.Customer_Name = ?"
+                params.append(self.customer_name)
+            
+            if self.customer_email:
+                query += " AND C.Customer_Email = ?"
+                params.append(self.customer_email)
+            
+            query += " ORDER BY T.Date DESC, B.Time DESC;"
+            
+            # Execute query
+            cursor.execute(query, params)
+            data = cursor.fetchall()
+            
+            # Close connection
+            cursor.close()
+            conn.close()
+
+            if not data:
+                QMessageBox.information(self, "No Records", 
+                                       "No bookings found for the given customer details.")
+                headers = ["Customer Name", "Booking ID", "Movie", "Date", "Time", "No of tickets", "Booking status"]
+                self.recordsTable.setColumnCount(len(headers))
+                self.recordsTable.setHorizontalHeaderLabels(headers)
+                self.recordsTable.setRowCount(0)
+                return
+
+            # Prepare the table for data
+            headers = ["Customer Name", "Booking ID", "Movie", "Date", "Time", "No of tickets", "Booking status"]
+            self.recordsTable.setColumnCount(len(headers))
+            self.recordsTable.setHorizontalHeaderLabels(headers)
+            self.recordsTable.setRowCount(len(data))
+            
+            # Populate table rows
+            for row_index, row_data in enumerate(data):
+                for col_index, item in enumerate(row_data):
+                    # Format datetime fields
+                    if col_index == 3:  # Date column
+                        if hasattr(item, 'strftime'):
+                            item_str = item.strftime("%Y-%m-%d")
+                        else:
+                            item_str = str(item) if item is not None else ""
+                    elif col_index == 4:  # Time column
+                        if hasattr(item, 'strftime'):
+                            item_str = item.strftime("%H:%M")
+                        else:
+                            item_str = str(item) if item is not None else ""
+                    else:
+                        item_str = str(item) if item is not None else ""
+                    
+                    self.recordsTable.setItem(row_index, col_index, QTableWidgetItem(item_str))
+
+            # Auto-resize columns
+            self.recordsTable.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+            # Make the 'Movie' column expand to fill available space
+            self.recordsTable.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
+
+        except pyodbc.Error as ex:
+            sqlstate = ex.args[0] if ex.args else "Unknown"
+            QMessageBox.critical(self, "Database Error", 
+                                 f"Could not connect to the database or run query.\nError: {sqlstate}")
+        except Exception as e:
+            QMessageBox.critical(self, "Application Error", 
+                                 f"An unexpected error occurred during data loading: {e}")
+    
+    def cancel_booking(self):
+        """Cancels the selected booking."""
+        selected_row = self.recordsTable.currentRow()
+        
+        if selected_row < 0:
+            QMessageBox.warning(self, "No Selection", "Please select a booking to cancel.")
+            return
+        
+        # Get the Booking ID from the selected row
+        booking_id_item = self.recordsTable.item(selected_row, 1)
+        if not booking_id_item:
+            QMessageBox.warning(self, "Error", "Could not read Booking ID from selected row.")
+            return
+        
+        booking_id = booking_id_item.text()
+        
+        # Get the current booking status
+        status_item = self.recordsTable.item(selected_row, 6)
+        current_status = status_item.text() if status_item else "Unknown"
+        
+        # Check if already cancelled
+        if current_status.lower() == 'cancelled':
+            QMessageBox.information(self, "Already Cancelled", 
+                                   f"Booking ID {booking_id} is already cancelled.")
+            return
+        
+        # Confirm cancellation
+        reply = QMessageBox.question(self, "Confirm Cancellation",
+                                     f"Are you sure you want to cancel Booking ID: {booking_id}?",
+                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        
+        if reply != QMessageBox.StandardButton.Yes:
+            return
+        
+        # Update the booking status in the database
+        conn_str = create_connection_string()
+        try:
+            conn = pyodbc.connect(conn_str)
+            cursor = conn.cursor()
+            
+            # Update the Tickets table
+            update_query = """
+            UPDATE Tickets
+            SET Booking_Status = 'Cancelled'
+            WHERE BookingID = ?
+            """
+            
+            cursor.execute(update_query, (booking_id,))
+            rows_affected = cursor.rowcount
+            conn.commit()
+            
+            cursor.close()
+            conn.close()
+            
+            if rows_affected > 0:
+                QMessageBox.information(self, "Success", 
+                                       f"Booking {booking_id} has been cancelled successfully.")
+                # Reload the table to show updated status
+                self.load_customer_bookings()
+            else:
+                QMessageBox.warning(self, "Update Failed", 
+                                   f"No rows were updated. Booking ID {booking_id} might not exist in Tickets table.")
+            
+        except pyodbc.Error as ex:
+            sqlstate = ex.args[0] if ex.args else "Unknown error"
+            QMessageBox.critical(self, "Database Error", 
+                                 f"Could not cancel booking.\nError: {sqlstate}")
+        except Exception as e:
+            QMessageBox.critical(self, "Application Error", 
+                                 f"An error occurred: {e}")
+
+class ManageWindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        # Load the VIEW RECORDS / MANAGE BOOKINGS UI
+        try:
+            uic.loadUi("manage_bookings.ui", self)
+        except Exception as e:
+            QMessageBox.critical(self, "UI Load Error", 
+                                 f"Could not load UI file 'manage_bookings.ui'. Is it in the same directory?\nError: {e}")
+            sys.exit(1)
+
+        # Find the Name and Email input fields
+        self.nameInput = self.findChild(QtWidgets.QLineEdit, "name_input")  # Update with actual object name from Qt Designer
+        self.emailInput = self.findChild(QtWidgets.QLineEdit, "email_input")  # Update with actual object name from Qt Designer
+        
+        if not self.nameInput:
+            print("Warning: 'name_input' QLineEdit not found in manage_bookings.ui!")
+        if not self.emailInput:
+            print("Warning: 'email_input' QLineEdit not found in manage_bookings.ui!")
+            
+        # Find the Return Button and connect its action
+        self.returnButton = self.findChild(QtWidgets.QPushButton, "book_return")
+        if self.returnButton:
+            self.returnButton.clicked.connect(self.close_window)
+        else:
+            print("Error: 'book_return' button not found in manage_bookings.ui!")
+
+        # Find the Next Button and connect its action
+        self.nextButton = self.findChild(QtWidgets.QPushButton, "next_button")
+        if self.nextButton:
+            self.nextButton.clicked.connect(self.open_records_customer)
+        else:
+            print("Error: 'next_button' not found in manage_bookings.ui!")
+    
+    def close_window(self):
+        """Closes the current ManageWindow to return to the MainWindow."""
+        self.close()
+        
+    def open_records_customer(self):
+        """Opens the Records Customer window with the entered customer details."""
+        # Get customer name and email from input fields
+        customer_name = self.nameInput.text().strip() if self.nameInput else ""
+        customer_email = self.emailInput.text().strip() if self.emailInput else ""
+        
+        # Validate inputs - at least one field must be filled
+        if not customer_name and not customer_email:
+            QMessageBox.warning(self, "Input Required", 
+                              "Please enter at least Customer Name or Email to search.")
+            return
+        
+        # Open the Records Customer window and pass the customer details
+        self.records_customer_window = RecordsCustomerWindow(customer_name, customer_email)
+        self.records_customer_window.show()
+
+#Application Setup
+
+def main():
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec())
+
+
+if __name__ == "__main__":
+    main()
