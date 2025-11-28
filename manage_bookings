@@ -1,0 +1,174 @@
+from PyQt6 import QtWidgets, uic
+from PyQt6.QtWidgets import QApplication, QTableWidgetItem, QHeaderView, QMessageBox
+import sys
+import os
+import pyodbc 
+
+# --- Database Connection Details (MUST BE UPDATED) ---
+server = 'localhost'
+database = 'project'  # Ensure this matches your actual database name (e.g., Cinema_booking_system)
+use_windows_authentication = True
+username = 'your_username'
+password = 'your_password'
+
+# Set up scaling
+os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "0.5"
+os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "1"
+os.environ["QT_SCALE_FACTOR"] = "1.3"
+
+def create_connection_string():
+    """Builds the pyodbc connection string."""
+    if use_windows_authentication:
+        return (
+            f'DRIVER={{ODBC Driver 17 for SQL Server}};'
+            f'SERVER={server};'
+            f'DATABASE={database};'
+            f'Trusted_Connection=yes;'
+        )
+    else:
+        return (
+            f'DRIVER={{ODBC Driver 17 for SQL Server}};'
+            f'SERVER={server};'
+            f'DATABASE={database};'
+            f'UID={username};'
+            f'PWD={password};'
+        )
+
+# --- Main Window ---
+
+class MainWindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        # Load newmovie.ui
+        try:
+            uic.loadUi("newmovie.ui", self)
+        except Exception as e:
+            QMessageBox.critical(self, "UI Load Error", 
+                                 f"Could not load UI file 'newmovie.ui'. Is it in the same directory?\nError: {e}")
+            sys.exit(1)
+
+
+        # Find the button on the main screen
+        self.manageButton = self.findChild(QtWidgets.QPushButton, "manageButton")
+        if self.manageButton:
+            self.manageButton.clicked.connect(self.open_manage_bookings)
+        else:
+            print("Error: 'manageButton' not found in newmovie.ui! Check the object name in Qt Designer.") 
+
+    def open_manage_bookings(self):
+        """Opens the Manage Bookings window."""
+        self.manage_bookings = ManageWindow()
+        self.manage_bookings.show()
+
+
+# --- Manage Bookings Window ---
+
+class ManageWindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        # Load the VIEW RECORDS / MANAGE BOOKINGS UI
+        try:
+            uic.loadUi("manage_bookings.ui", self)
+        except Exception as e:
+            QMessageBox.critical(self, "UI Load Error", 
+                                 f"Could not load UI file 'manage_bookings.ui'. Is it in the same directory?\nError: {e}")
+            sys.exit(1)
+
+
+        # Find the QTableWidget
+        self.bookingsTable = self.findChild(QtWidgets.QTableWidget, "bookingsTable")
+        if self.bookingsTable is None:
+            print("Error: QTableWidget named 'bookingsTable' not found in manage_bookings.ui!")
+            
+        # 🆕 Find the Return Button and connect its action
+        self.returnButton = self.findChild(QtWidgets.QPushButton, "book_return")
+        if self.returnButton:
+            self.returnButton.clicked.connect(self.close_window)
+        else:
+            print("Error: 'book_return' button not found in manage_bookings.ui!")
+        
+        # Load data when the window is initialized
+        self.load_booking_data()
+    
+    # 🆕 Method to close the current window
+    def close_window(self):
+        """Closes the current ManageWindow to return to the MainWindow."""
+        self.close()
+
+    def load_booking_data(self):
+        """Connects to the database and populates the table widget."""
+        if not self.bookingsTable:
+            return
+
+        conn_str = create_connection_string()
+        try:
+            conn = pyodbc.connect(conn_str)
+            cursor = conn.cursor()
+            
+            # SQL Query to retrieve key booking details
+            query = """
+            SELECT
+                B.BookingID,
+                C.Customer_Name,
+                M.Movie_Name,
+                B.[Time],
+                B.No_Of_Tickets,
+                B.Mode_Of_Payment
+            FROM Bookings B
+            JOIN Customer C ON B.Customer_Email = C.Customer_Email
+            JOIN Movies M ON B.Movie_Name = M.Movie_Name
+            ORDER BY B.BookingID;
+            """
+            cursor.execute(query)
+            data = cursor.fetchall()
+            
+            # Close connection
+            cursor.close()
+            conn.close()
+
+            # Prepare the table for data
+            headers = ["ID", "Customer Name", "Movie Name", "Show Time", "Tickets", "Payment"]
+            self.bookingsTable.setColumnCount(len(headers))
+            self.bookingsTable.setHorizontalHeaderLabels(headers)
+            self.bookingsTable.setRowCount(len(data))
+            
+            # Populate table rows
+            for row_index, row_data in enumerate(data):
+                for col_index, item in enumerate(row_data):
+                    if col_index == 3:
+                        item_str = item.strftime("%Y-%m-%d %H:%M")
+                    else:
+                        item_str = str(item)
+                    
+                    self.bookingsTable.setItem(row_index, col_index, QTableWidgetItem(item_str))
+
+            # Auto-resize columns
+            self.bookingsTable.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+            # Make the 'Movie Name' column expand to fill the available space
+            self.bookingsTable.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
+
+
+        except pyodbc.Error as ex:
+            sqlstate = ex.args[0]
+            print(f"Database Connection Error: {sqlstate}")
+            QMessageBox.critical(self, "Database Error", 
+                                           f"Could not connect to the database or run query.\nPlease check your server/driver settings.\nError: {sqlstate}")
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            QMessageBox.critical(self, "Application Error", 
+                                           f"An unexpected error occurred during data loading: {e}")
+
+
+# --- Application Setup ---
+
+def main():
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec())
+
+
+if __name__ == "__main__":
+    main()
