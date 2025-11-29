@@ -1,0 +1,270 @@
+from PyQt6 import QtWidgets, uic
+from PyQt6.QtWidgets import QApplication, QTableWidgetItem, QHeaderView, QMessageBox
+import sys
+import os
+import pyodbc
+from datetime import datetime, timedelta
+
+# --- Database Connection Details ---
+server = 'localhost\\SQLSERVER1'  # Your instance name
+database = 'project'  # Your database name
+use_windows_authentication = True  # True for Windows Auth, False for SQL login
+username = 'sa'       # Only used if use_windows_authentication=False
+password = 'your_password'  # Only used if use_windows_authentication=False
+
+# Set up scaling
+os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "0.5"
+os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "1"
+os.environ["QT_SCALE_FACTOR"] = "1.3"
+
+def create_connection_string():
+    if use_windows_authentication:
+        return (
+            f'DRIVER={{ODBC Driver 17 for SQL Server}};'
+            f'SERVER={server};'
+            f'DATABASE={database};'
+            f'Trusted_Connection=yes;'
+        )
+    else:
+        return (
+            f'DRIVER={{ODBC Driver 17 for SQL Server}};'
+            f'SERVER={server};'
+            f'DATABASE={database};'
+            f'UID={username};'
+            f'PWD={password};'
+        )
+
+# --- Main Window ---
+class MainWindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        # Load newmovie.ui
+        try:
+            self.ui = uic.loadUi("newmovie.ui")
+            self.setCentralWidget(self.ui)
+        except Exception as e:
+            QMessageBox.critical(self, "UI Load Error",
+                                 f"Could not load newmovie.ui.\nError: {e}")
+            sys.exit(1)
+
+        # Manage Bookings button
+        try:
+            self.ui.manageButton.clicked.connect(self.open_manage_bookings)
+        except AttributeError:
+            print("Error: 'manageButton' not found in newmovie.ui!")
+
+        # Branch ComboBox
+        try:
+            self.branch_combo = self.ui.branch_combo
+            self.load_branch_names()
+        except AttributeError:
+            print("Error: 'branch_combo' not found in newmovie.ui!")
+
+        # Movie ComboBox
+        try:
+            self.movie_combo = self.ui.movie_combo
+            self.load_active_movies()
+        except AttributeError:
+            print("Error: 'movie_combo' not found in newmovie.ui!")
+
+        # Date ComboBox
+        try:
+            self.date_combo = self.ui.date_combo
+            self.load_date_dropdown()
+        except AttributeError:
+            print("Error: 'date_combo' not found in newmovie.ui!")
+
+        # Book Next Button
+        try:
+            self.book_next_button = self.ui.book_next
+            self.book_next_button.clicked.connect(self.open_booking_window)
+        except AttributeError:
+            print("Error: 'book_next' button not found in newmovie.ui!")
+
+    # --- Load Branch Names ---
+    def load_branch_names(self):
+        conn_str = create_connection_string()
+        try:
+            conn = pyodbc.connect(conn_str)
+            cursor = conn.cursor()
+            query = "SELECT BranchName FROM Cinema ORDER BY BranchName;"
+            cursor.execute(query)
+            branches = cursor.fetchall()
+            self.branch_combo.clear()
+
+            # Add placeholder
+            self.branch_combo.addItem("Select Branch")
+
+            for branch in branches:
+                self.branch_combo.addItem(branch[0])
+
+            self.branch_combo.setCurrentIndex(0)
+            cursor.close()
+            conn.close()
+        except Exception as e:
+            print("Branch loading error:", e)
+            self.branch_combo.clear()
+            self.branch_combo.addItem("Error")
+            self.branch_combo.setCurrentIndex(0)
+
+    # --- Load Active Movies ---
+    def load_active_movies(self):
+        conn_str = create_connection_string()
+        try:
+            conn = pyodbc.connect(conn_str)
+            cursor = conn.cursor()
+            query = "SELECT Movie_Name FROM Movies WHERE Is_Active = 1 ORDER BY Movie_Name;"
+            cursor.execute(query)
+            movies = cursor.fetchall()
+            self.movie_combo.clear()
+
+            # Add placeholder
+            self.movie_combo.addItem("Select Movie")
+
+            for movie in movies:
+                self.movie_combo.addItem(movie[0])
+
+            self.movie_combo.setCurrentIndex(0)
+            cursor.close()
+            conn.close()
+        except Exception as e:
+            print("Movie loading error:", e)
+            self.movie_combo.clear()
+            self.movie_combo.addItem("Error")
+            self.movie_combo.setCurrentIndex(0)
+
+    # --- Load Date Dropdown ---
+    def load_date_dropdown(self):
+        self.date_combo.clear()
+
+        # Add placeholder
+        self.date_combo.addItem("Select Date")
+
+        today = datetime.today()
+        for i in range(8):  # today + next 7 days
+            date_str = (today + timedelta(days=i)).strftime("%Y-%m-%d")
+            self.date_combo.addItem(date_str)
+
+        self.date_combo.setCurrentIndex(0)
+
+    # --- Open Manage Bookings Window ---
+    def open_manage_bookings(self):
+        self.manage_bookings = ManageWindow()
+        self.manage_bookings.show()
+
+    # --- Open Booking Window ---
+    def open_booking_window(self):
+        """Opens booking.ui only if all selections are valid."""
+        if self.branch_combo.currentIndex() == 0:
+            QMessageBox.warning(self, "Selection Required", "Please select a Branch.")
+            return
+        if self.movie_combo.currentIndex() == 0:
+            QMessageBox.warning(self, "Selection Required", "Please select a Movie.")
+            return
+        if self.date_combo.currentIndex() == 0:
+            QMessageBox.warning(self, "Selection Required", "Please select a Date.")
+            return
+
+        # If all selected, open booking window
+        try:
+            self.booking_window = BookingWindow()
+            self.booking_window.show()
+        except Exception as e:
+            QMessageBox.critical(self, "UI Load Error",
+                                 f"Could not load booking.ui.\nError: {e}")
+
+# --- Booking Window ---
+class BookingWindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super().__init__()
+        try:
+            self.ui = uic.loadUi("booking.ui")
+            self.setCentralWidget(self.ui)
+        except Exception as e:
+            QMessageBox.critical(self, "UI Load Error",
+                                 f"Could not load booking.ui.\nError: {e}")
+            sys.exit(1)
+
+# --- Manage Bookings Window ---
+class ManageWindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super().__init__()
+        try:
+            self.ui = uic.loadUi("manage_bookings.ui")
+            self.setCentralWidget(self.ui)
+        except Exception as e:
+            QMessageBox.critical(self, "UI Load Error",
+                                 f"Could not load manage_bookings.ui.\nError: {e}")
+            sys.exit(1)
+
+        # Bookings Table
+        try:
+            self.bookingsTable = self.ui.bookingsTable
+        except AttributeError:
+            print("Error: 'bookingsTable' not found!")
+
+        # Return Button
+        try:
+            self.ui.book_return.clicked.connect(self.close_window)
+        except AttributeError:
+            print("Error: 'book_return' not found!")
+
+        # Load booking data
+        self.load_booking_data()
+
+    def close_window(self):
+        self.close()
+
+    def load_booking_data(self):
+        if not hasattr(self, 'bookingsTable') or self.bookingsTable is None:
+            return
+        conn_str = create_connection_string()
+        try:
+            conn = pyodbc.connect(conn_str)
+            cursor = conn.cursor()
+            query = """
+            SELECT
+                B.BookingID,
+                C.Customer_Name,
+                M.Movie_Name,
+                B.[Time],
+                B.No_Of_Tickets,
+                B.Mode_Of_Payment
+            FROM Bookings B
+            JOIN Customer C ON B.Customer_Email = C.Customer_Email
+            JOIN Movies M ON B.Movie_Name = M.Movie_Name
+            ORDER BY B.BookingID;
+            """
+            cursor.execute(query)
+            data = cursor.fetchall()
+            cursor.close()
+            conn.close()
+
+            headers = ["ID", "Customer Name", "Movie Name", "Show Time", "Tickets", "Payment"]
+            self.bookingsTable.setColumnCount(len(headers))
+            self.bookingsTable.setHorizontalHeaderLabels(headers)
+            self.bookingsTable.setRowCount(len(data))
+
+            for row_index, row_data in enumerate(data):
+                for col_index, item in enumerate(row_data):
+                    if col_index == 3:  # Show Time
+                        item_str = item.strftime("%Y-%m-%d %H:%M")
+                    else:
+                        item_str = str(item)
+                    self.bookingsTable.setItem(row_index, col_index, QTableWidgetItem(item_str))
+
+            self.bookingsTable.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+            self.bookingsTable.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
+        except Exception as e:
+            print("Booking table load error:", e)
+
+# --- Application Setup ---
+def main():
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec())
+
+if __name__ == "__main__":
+    main()
