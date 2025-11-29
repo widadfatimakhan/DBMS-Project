@@ -1,0 +1,219 @@
+from PyQt6 import QtWidgets, uic
+from PyQt6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QHeaderView, QMessageBox
+import sys
+import os
+import pyodbc
+
+# Database Connection Details
+server = 'localhost'
+database = 'Cinema_booking_system'
+use_windows_authentication = True
+username = 'your_username'
+password = 'your_password'
+
+# Set up scaling
+os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "0.5"
+os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "1"
+os.environ["QT_SCALE_FACTOR"] = "1.3"
+
+
+def create_connection_string():
+    if use_windows_authentication:
+        return (
+            f'DRIVER={{ODBC Driver 17 for SQL Server}};'
+            f'SERVER={server};'
+            f'DATABASE={database};'
+            f'Trusted_Connection=yes;'
+        )
+    else:
+        return (
+            f'DRIVER={{ODBC Driver 17 for SQL Server}};'
+            f'SERVER={server};'
+            f'DATABASE={database};'
+            f'UID={username};'
+            f'PWD={password};'
+        )
+
+
+# ============================================================
+#               RECORDS TABLE WINDOW
+# ============================================================
+
+class RecordsTableWindow(QMainWindow):
+    def __init__(self):
+        super(RecordsTableWindow, self).__init__()
+        uic.loadUi('records_table.ui', self)
+
+        self.setup_table()
+        self.returnButton.clicked.connect(self.close)
+
+    def setup_table(self):
+        self.tableWidget.setColumnCount(7)
+        self.tableWidget.setHorizontalHeaderLabels([
+            "Customer Name", "Booking ID", "Movie", "Date",
+            "Time", "No of Tickets", "Booking Status"
+        ])
+
+        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
+
+    def load_data(self, movie=None, branch=None):
+        try:
+            conn = pyodbc.connect(create_connection_string())
+            cursor = conn.cursor()
+
+            # ======================================================
+            # CORRECT SQL QUERY (Branch filters now working properly)
+            # ======================================================
+            query = """
+                SELECT  
+                    C.Customer_Name,
+                    B.BookingID,
+                    M.Movie_Name,
+                    T.Date,
+                    B.Time,
+                    B.No_Of_Tickets,
+                    T.Booking_Status,
+                    Cin.BranchName
+                FROM Customer C
+                JOIN Bookings B 
+                    ON C.Customer_Email = B.Customer_Email
+                JOIN Movies M 
+                    ON B.Movie_Name = M.Movie_Name
+                JOIN Tickets T 
+                    ON B.BookingID = T.BookingID
+                JOIN Cinema_Movie CM 
+                    ON CM.Movie_Name = M.Movie_Name
+                    AND CM.BranchID = B.BranchID        -- CRITICAL FIX
+                JOIN Cinema Cin 
+                    ON Cin.BranchID = CM.BranchID
+                WHERE T.Booking_Status = 'Confirmed'
+            """
+
+            params = []
+
+            # Movie filter
+            if movie and movie != "-- Select Movie --":
+                query += " AND M.Movie_Name = ?"
+                params.append(movie)
+
+            # Branch filter
+            if branch and branch != "-- Select Branch --":
+                query += " AND Cin.BranchName = ?"
+                params.append(branch)
+
+            query += " ORDER BY T.Date DESC, B.Time DESC"
+
+            # Execute query
+            cursor.execute(query, params) if params else cursor.execute(query)
+            results = cursor.fetchall()
+
+            # Clear table and load results
+            self.tableWidget.setRowCount(0)
+
+            for row_idx, row_data in enumerate(results):
+                self.tableWidget.insertRow(row_idx)
+                for col_idx in range(7):  
+                    value = row_data[col_idx]
+                    self.tableWidget.setItem(row_idx, col_idx, QTableWidgetItem(str(value)))
+
+            # Dynamic title
+            title_parts = []
+            if movie and movie != "Select Movie":
+                title_parts.append(f"Movie: {movie}")
+            if branch and branch != "Select Branch":
+                title_parts.append(f"Branch: {branch}")
+
+            if title_parts:
+                self.setWindowTitle(f"Records Table - {' | '.join(title_parts)} ({len(results)} records)")
+            else:
+                self.setWindowTitle(f"Records Table - All Confirmed Bookings ({len(results)} records)")
+
+            cursor.close()
+            conn.close()
+
+        except Exception as e:
+            QMessageBox.critical(self, "Error", str(e))
+
+
+# ============================================================
+#               VIEW BOOKINGS SCREEN
+# ============================================================
+
+class ViewBookingsWindow(QMainWindow):
+    def __init__(self):
+        super(ViewBookingsWindow, self).__init__()
+        uic.loadUi('view_bookings.ui', self)
+
+        self.records_window = None
+
+        self.viewBookingsButton.clicked.connect(self.view_bookings)
+
+        self.populate_movie_dropdown()
+        self.populate_branch_dropdown()
+
+    def populate_movie_dropdown(self):
+        try:
+            conn = pyodbc.connect(create_connection_string())
+            cursor = conn.cursor()
+
+            cursor.execute("SELECT DISTINCT Movie_Name FROM Movies ORDER BY Movie_Name")
+
+            self.movieComboBox.clear()
+            self.movieComboBox.addItem("Select Movie")
+
+            for row in cursor.fetchall():
+                self.movieComboBox.addItem(row[0])
+
+            cursor.close()
+            conn.close()
+
+        except Exception as e:
+            QMessageBox.warning(self, "Error", str(e))
+
+    def populate_branch_dropdown(self):
+        try:
+            conn = pyodbc.connect(create_connection_string())
+            cursor = conn.cursor()
+
+            cursor.execute("SELECT DISTINCT BranchName FROM Cinema ORDER BY BranchName")
+
+            self.branchComboBox.clear()
+            self.branchComboBox.addItem("Select Branch")
+
+            for row in cursor.fetchall():
+                self.branchComboBox.addItem(row[0])
+
+            cursor.close()
+            conn.close()
+
+        except Exception as e:
+            QMessageBox.warning(self, "Error", str(e))
+
+    def view_bookings(self):
+        selected_movie = self.movieComboBox.currentText()
+        selected_branch = self.branchComboBox.currentText()
+
+        # Delete old window if open
+        if self.records_window:
+            self.records_window.close()
+            self.records_window.deleteLater()
+
+        # Create and show new window
+        self.records_window = RecordsTableWindow()
+        self.records_window.load_data(selected_movie, selected_branch)
+        self.records_window.show()
+        self.records_window.raise_()
+        self.records_window.activateWindow()
+
+
+# ============================================================
+#                        MAIN APP
+# ============================================================
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    window = ViewBookingsWindow()
+    window.show()
+    sys.exit(app.exec())
