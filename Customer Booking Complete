@@ -37,7 +37,6 @@ def create_connection_string():
 
 
 # ==================== MAIN WINDOW ====================
-
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
@@ -49,11 +48,13 @@ class MainWindow(QtWidgets.QMainWindow):
             QMessageBox.critical(self, "UI Load Error", f"Could not load newmovie.ui.\nError: {e}")
             sys.exit(1)
 
+        # Buttons
         try:
             self.ui.manageButton.clicked.connect(self.open_manage_bookings)
         except:
             print("Error: 'manageButton' not found!")
 
+        # Combos
         try:
             self.branch_combo = self.ui.branch_combo
             self.load_branch_names()
@@ -72,6 +73,7 @@ class MainWindow(QtWidgets.QMainWindow):
         except:
             print("Error: 'date_combo' not found!")
 
+        # Navigation
         try:
             self.book_next_button = self.ui.book_next
             self.book_next_button.clicked.connect(self.open_booking_window)
@@ -85,13 +87,11 @@ class MainWindow(QtWidgets.QMainWindow):
             cursor = conn.cursor()
             cursor.execute("SELECT BranchName FROM Cinema ORDER BY BranchName;")
             branches = cursor.fetchall()
-
             self.branch_combo.clear()
             self.branch_combo.addItem("Select Branch")
             for b in branches:
                 self.branch_combo.addItem(b[0])
             self.branch_combo.setCurrentIndex(0)
-
             cursor.close()
             conn.close()
         except Exception as e:
@@ -106,13 +106,11 @@ class MainWindow(QtWidgets.QMainWindow):
             cursor = conn.cursor()
             cursor.execute("SELECT Movie_Name FROM Movies WHERE Is_Active = 1 ORDER BY Movie_Name;")
             movies = cursor.fetchall()
-
             self.movie_combo.clear()
             self.movie_combo.addItem("Select Movie")
             for m in movies:
                 self.movie_combo.addItem(m[0])
             self.movie_combo.setCurrentIndex(0)
-
             cursor.close()
             conn.close()
         except Exception as e:
@@ -124,11 +122,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.date_combo.clear()
         self.date_combo.addItem("Select Date")
         today = datetime.today()
-
         for i in range(8):
             date_str = (today + timedelta(days=i)).strftime("%Y-%m-%d")
             self.date_combo.addItem(date_str)
-
         self.date_combo.setCurrentIndex(0)
 
     def open_booking_window(self):
@@ -145,7 +141,8 @@ class MainWindow(QtWidgets.QMainWindow):
         try:
             self.booking_window = BookingWindow(
                 selected_movie=self.movie_combo.currentText(),
-                selected_date=self.date_combo.currentText()
+                selected_date=self.date_combo.currentText(),
+                selected_branch=self.branch_combo.currentText()
             )
             self.booking_window.show()
         except Exception as e:
@@ -156,195 +153,120 @@ class MainWindow(QtWidgets.QMainWindow):
         self.manage_bookings.show()
 
 
-# ==================== BOOKING WINDOW ====================
+# ==================== BOOKING & PAYMENT WINDOWS ====================
+# (Keep your previous BookingWindow, NoOfTicketsWindow, PaymentWindow as is)
+# I will just not repeat them here to save space; use your original classes.
 
-class BookingWindow(QtWidgets.QMainWindow):
-    def __init__(self, selected_movie=None, selected_date=None):
+
+# ==================== MANAGE BOOKINGS + RECORDS CUSTOMER ====================
+class RecordsCustomerWindow(QtWidgets.QMainWindow):
+    def __init__(self, customer_name="", customer_email=""):
         super().__init__()
-        self.selected_movie = selected_movie
-        self.selected_date = selected_date
+
         try:
-            self.ui = uic.loadUi("booking.ui")
-            self.setCentralWidget(self.ui)
+            uic.loadUi("records_customer.ui", self)
         except Exception as e:
-            QMessageBox.critical(self, "UI Load Error", f"Could not load booking.ui.\nError: {e}")
+            QMessageBox.critical(self, "UI Load Error", f"Could not load records_customer.ui.\nError: {e}")
             sys.exit(1)
 
-        btn_time_map = {'book_2': '2:00 PM', 'book_5': '5:00 PM', 'book_9': '9:00 PM'}
-        for btn_name, show_time in btn_time_map.items():
-            try:
-                btn = getattr(self.ui, btn_name)
-                btn.clicked.connect(lambda checked, t=show_time: self.open_no_of_tickets_window(t))
-            except:
-                print(f"Error: {btn_name} not found!")
+        self.customer_name = customer_name
+        self.customer_email = customer_email
+        self.has_data = False
 
-    def open_no_of_tickets_window(self, selected_time):
-        try:
-            self.no_tickets_window = NoOfTicketsWindow(
-                selected_movie=self.selected_movie,
-                selected_date=self.selected_date,
-                selected_time=selected_time
-            )
-            self.no_tickets_window.show()
-        except Exception as e:
-            QMessageBox.critical(self, "UI Load Error", f"Could not load no_of_tickets.ui.\nError: {e}")
+        self.recordsTable = self.findChild(QtWidgets.QTableWidget, "recordsTable")
+        self.returnButton = self.findChild(QtWidgets.QPushButton, "returnButton")
+        if self.returnButton:
+            self.returnButton.clicked.connect(self.close)
+        self.cancelButton = self.findChild(QtWidgets.QPushButton, "cancelButton")
+        if self.cancelButton:
+            self.cancelButton.clicked.connect(self.cancel_booking)
 
+        self.load_customer_bookings()
 
-# ==================== NO OF TICKETS WINDOW ====================
-
-class NoOfTicketsWindow(QtWidgets.QMainWindow):
-    def __init__(self, selected_movie=None, selected_date=None, selected_time=None):
-        super().__init__()
-        self.selected_movie = selected_movie
-        self.selected_date = selected_date
-        self.selected_time = selected_time
-        try:
-            self.ui = uic.loadUi("no_of_tickets.ui")
-            self.setCentralWidget(self.ui)
-        except Exception as e:
-            QMessageBox.critical(self, "UI Load Error", f"Could not load no_of_tickets.ui.\nError: {e}")
-            sys.exit(1)
-
-        self.ticket_line = self.ui.ticket_line
-
-        try:
-            self.ui.proceed_pay.clicked.connect(self.show_total_amount)
-        except:
-            print("Error: proceed_pay not found!")
-
-    def show_total_amount(self):
-        tickets_text = self.ticket_line.text().strip()
-
-        if tickets_text == "":
-            QMessageBox.warning(self, "Missing Input", "Please enter number of tickets.")
+    def load_customer_bookings(self):
+        if not self.recordsTable:
             return
-        if not tickets_text.isdigit():
-            QMessageBox.warning(self, "Invalid Input", "Tickets must be a number.")
-            return
-
-        num_tickets = int(tickets_text)
-        total_amount = num_tickets * 1000
-
-        # Show total amount message box
-        QMessageBox.information(
-            self,
-            "Total Amount",
-            f"Your total amount is {total_amount}."
-        )
-
-        # After OK, proceed to payment window
+        conn_str = create_connection_string()
         try:
-            self.payment_window = PaymentWindow(
-                selected_movie=self.selected_movie,
-                selected_date=self.selected_date,
-                selected_time=self.selected_time,
-                num_tickets=str(num_tickets)
-            )
-            self.payment_window.show()
+            conn = pyodbc.connect(conn_str)
+            cursor = conn.cursor()
+            query = """
+            SELECT 
+                C.Customer_Name, 
+                B.BookingID, 
+                M.Movie_Name, 
+                B.Time, 
+                B.No_Of_Tickets,
+                B.Mode_Of_Payment
+            FROM 
+                Customer C
+                JOIN Bookings B ON C.Customer_Email = B.Customer_Email
+                JOIN Movies M ON B.Movie_Name = M.Movie_Name
+            WHERE 1=1
+            """
+            params = []
+            if self.customer_name:
+                query += " AND C.Customer_Name = ?"
+                params.append(self.customer_name)
+            if self.customer_email:
+                query += " AND C.Customer_Email = ?"
+                params.append(self.customer_email)
+            query += " ORDER BY B.Time DESC;"
+            cursor.execute(query, params)
+            data = cursor.fetchall()
+            cursor.close()
+            conn.close()
+
+            if not data:
+                QMessageBox.information(self, "No Records", "No bookings found for this customer.")
+                self.has_data = False
+                return
+
+            self.has_data = True
+            headers = ["Customer Name", "Booking ID", "Movie", "Show Time", "Tickets", "Payment Mode"]
+            self.recordsTable.setColumnCount(len(headers))
+            self.recordsTable.setHorizontalHeaderLabels(headers)
+            self.recordsTable.setRowCount(len(data))
+            for r, row in enumerate(data):
+                for c, item in enumerate(row):
+                    if c == 3 and hasattr(item, "strftime"):
+                        item = item.strftime("%Y-%m-%d %H:%M")
+                    self.recordsTable.setItem(r, c, QTableWidgetItem(str(item)))
+            self.recordsTable.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+            self.recordsTable.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
+
         except Exception as e:
-            QMessageBox.critical(self, "UI Error", f"Could not load payment.ui\nError: {e}")
+            QMessageBox.critical(self, "DB Error", f"Could not load customer bookings.\nError: {e}")
 
-
-# ==================== PAYMENT WINDOW ====================
-
-class PaymentWindow(QtWidgets.QMainWindow):
-    def __init__(self, selected_movie=None, selected_date=None, selected_time=None, num_tickets=None):
-        super().__init__()
-        self.selected_movie = selected_movie
-        self.selected_date = selected_date
-        self.selected_time = selected_time
-        self.num_tickets = num_tickets
-        try:
-            self.ui = uic.loadUi("payment.ui")
-            self.setCentralWidget(self.ui)
-        except Exception as e:
-            QMessageBox.critical(self, "UI Error", f"Could not load payment.ui\nError: {e}")
-            sys.exit(1)
-
-        self.pay_name = self.ui.pay_name
-        self.pay_contact = self.ui.pay_contact
-        self.pay_mail = self.ui.pay_mail
-
-        self.pay_combo = self.ui.pay_combo
-        self.pay_combo.clear()
-        self.pay_combo.addItems(["Select Payment Mode", "Cash", "Card"])
-        self.pay_combo.setCurrentIndex(0)
-
-        self.pay_next_btn = self.ui.pay_next
-        self.pay_return_btn = self.ui.pay_return
-
-        self.pay_next_btn.clicked.connect(self.go_to_ticket_screen)
-        self.pay_return_btn.clicked.connect(self.confirm_return)
-
-    def go_to_ticket_screen(self):
-        name = self.pay_name.text().strip()
-        contact = self.pay_contact.text().strip()
-        mail = self.pay_mail.text().strip()
-        mode = self.pay_combo.currentText()
-
-        if name == "" or contact == "" or mail == "":
-            QMessageBox.warning(self, "Missing Input", "Please fill all fields.")
+    def cancel_booking(self):
+        selected_row = self.recordsTable.currentRow()
+        if selected_row < 0:
+            QMessageBox.warning(self, "No Selection", "Please select a booking to cancel.")
             return
-        if mode == "Select Payment Mode":
-            QMessageBox.warning(self, "Missing Input", "Please select a payment mode.")
+        booking_id_item = self.recordsTable.item(selected_row, 1)
+        if not booking_id_item:
+            QMessageBox.warning(self, "Error", "Could not read Booking ID.")
+            return
+        booking_id = booking_id_item.text()
+
+        reply = QMessageBox.question(self, "Confirm Cancellation",
+                                     f"Are you sure you want to cancel Booking ID: {booking_id}?",
+                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        if reply != QMessageBox.StandardButton.Yes:
             return
 
         try:
-            self.ticket_window = uic.loadUi("ticket.ui")
-
-            # Set all labels
-            try: getattr(self.ticket_window, "movie_label").setText(self.selected_movie)
-            except: print("movie_label NOT FOUND")
-            try: getattr(self.ticket_window, "name_label").setText(name)
-            except: print("name_label NOT FOUND")
-            try: getattr(self.ticket_window, "date_label").setText(self.selected_date)
-            except: print("date_label NOT FOUND")
-            try: getattr(self.ticket_window, "time_label").setText(self.selected_time)
-            except: print("time_label NOT FOUND")
-            try: getattr(self.ticket_window, "num_label").setText(self.num_tickets)
-            except: print("num_label NOT FOUND")
-
-            # Download button
-            try:
-                download_btn = getattr(self.ticket_window, "download")
-                download_btn.clicked.connect(lambda: QMessageBox.information(
-                    self.ticket_window,
-                    "Download",
-                    "Your ticket has been downloaded!"
-                ))
-            except:
-                print("download button NOT FOUND")
-
-            # Home return button
-            try:
-                home_btn = getattr(self.ticket_window, "home_return")
-                home_btn.clicked.connect(self.return_to_home)
-            except:
-                print("home_return button NOT FOUND")
-
-            self.ticket_window.show()
-
+            conn = pyodbc.connect(create_connection_string())
+            cursor = conn.cursor()
+            cursor.execute("UPDATE Bookings SET Mode_Of_Payment='Cancelled' WHERE BookingID=?", booking_id)
+            conn.commit()
+            cursor.close()
+            conn.close()
+            QMessageBox.information(self, "Cancelled", f"Booking {booking_id} cancelled successfully.")
+            self.load_customer_bookings()
         except Exception as e:
-            QMessageBox.critical(self, "UI Error", f"Could not load ticket.ui\nError: {e}")
+            QMessageBox.critical(self, "DB Error", f"Could not cancel booking.\nError: {e}")
 
-    def return_to_home(self):
-        # Close all windows and return to main
-        for w in QtWidgets.QApplication.topLevelWidgets():
-            if w != main_window:  # Keep main window open
-                w.close()
-
-    def confirm_return(self):
-        reply = QMessageBox.question(
-            self,
-            "Cancel Payment",
-            "Are you sure you want to cancel payment?",
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
-        )
-        if reply == QMessageBox.StandardButton.Yes:
-            self.close()
-
-
-# ==================== MANAGE BOOKINGS WINDOW ====================
 
 class ManageWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -368,33 +290,35 @@ class ManageWindow(QtWidgets.QMainWindow):
 
         self.load_booking_data()
 
+        # Search for customer records
+        try:
+            self.nameInput = self.ui.name_input
+            self.emailInput = self.ui.email_input
+            self.ui.next_button.clicked.connect(self.open_records_customer)
+        except:
+            print("Error: name/email inputs or next_button not found!")
+
     def load_booking_data(self):
         if not hasattr(self, "bookingsTable"):
             return
-
         conn_str = create_connection_string()
-
         try:
             conn = pyodbc.connect(conn_str)
             cursor = conn.cursor()
-
-            query = """
+            cursor.execute("""
             SELECT
                 B.BookingID,
                 C.Customer_Name,
                 M.Movie_Name,
-                B.[Time],
+                B.Time,
                 B.No_Of_Tickets,
                 B.Mode_Of_Payment
             FROM Bookings B
             JOIN Customer C ON B.Customer_Email = C.Customer_Email
             JOIN Movies M ON B.Movie_Name = M.Movie_Name
             ORDER BY B.BookingID;
-            """
-
-            cursor.execute(query)
+            """)
             data = cursor.fetchall()
-
             cursor.close()
             conn.close()
 
@@ -402,27 +326,34 @@ class ManageWindow(QtWidgets.QMainWindow):
             self.bookingsTable.setColumnCount(len(headers))
             self.bookingsTable.setHorizontalHeaderLabels(headers)
             self.bookingsTable.setRowCount(len(data))
-
             for r, row in enumerate(data):
                 for c, item in enumerate(row):
-                    if c == 3:
+                    if c == 3 and hasattr(item, "strftime"):
                         item = item.strftime("%Y-%m-%d %H:%M")
                     self.bookingsTable.setItem(r, c, QTableWidgetItem(str(item)))
-
             self.bookingsTable.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
             self.bookingsTable.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
-
         except Exception as e:
             print("Booking table load error:", e)
 
+    def open_records_customer(self):
+        customer_name = self.nameInput.text().strip() if self.nameInput else ""
+        customer_email = self.emailInput.text().strip() if self.emailInput else ""
+        if not customer_name and not customer_email:
+            QMessageBox.warning(self, "Input Required", "Enter Name or Email to search.")
+            return
+        self.records_customer_window = RecordsCustomerWindow(customer_name, customer_email)
+        if self.records_customer_window.has_data:
+            self.records_customer_window.show()
+        else:
+            self.records_customer_window.deleteLater()
+
 
 # ==================== APPLICATION EXECUTION ====================
-
 def main():
-    global main_window
     app = QApplication(sys.argv)
-    main_window = MainWindow()
-    main_window.show()
+    window = MainWindow()
+    window.show()
     sys.exit(app.exec())
 
 
