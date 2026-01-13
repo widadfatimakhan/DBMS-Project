@@ -19,8 +19,6 @@ This project demonstrates **GUI development, database integration, and customer 
 - Created and maintained **customer-related database tables and queries**.
 - Tested and debugged the customer-side application for a smooth user experience.
 
-> Note: This project focuses on the **customer side**. Administrative and other backend features were handled by other team members.
-
 ---
 
 ## Technologies Used
