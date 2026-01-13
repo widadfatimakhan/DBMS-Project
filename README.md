@@ -1,38 +1,38 @@
-# Database Management System (DBMS) Project
+# Cinema Ticket Booking System
 
 ## Overview
-This project was developed as part of a university Database Management Systems (DBMS) course.  
-It demonstrates core database concepts such as data storage, retrieval, and management through a functional application.
+This is a **Cinema Ticket Booking System**, developed as a university Database Management Systems (DBMS) project.  
+The system allows customers to browse movies, select showtimes, submit bookings, view their booking history, and cancel bookings — all via a **PyQt6 GUI application** connected to a SQL Server database.
 
-The project was completed as a **team-based semester project**.
+This project demonstrates **GUI development, database integration, and customer workflow management**.
 
 ---
 
-## Features
-- Database-driven application
-- Structured data storage and retrieval
-- User interaction through a simple interface
-- Implementation of core DBMS concepts
+## Customer-Side Features (My Contributions)
+- Designed and implemented the **customer-facing UI** using **Qt Designer + PyQt6**.
+- Developed workflows for customers to:
+  - Browse movies and select showtimes
+  - Submit bookings to the database
+  - View booking history
+  - Cancel bookings
+- Connected the UI to a **SQL Server database** using `pyodbc`.
+- Created and maintained **customer-related database tables and queries**.
+- Tested and debugged the customer-side application for a smooth user experience.
+
+> Note: This project focuses on the **customer side**. Administrative and other backend features were handled by other team members.
 
 ---
 
 ## Technologies Used
-- Python
-- Database concepts (SQL / DBMS)
+- Python 3.x
+- PyQt6 (GUI)
+- SQL Server / pyodbc
+- Qt Designer (UI design)
 - Git & GitHub
-
----
-
-## My Role & Contributions
-- Contributed to database design and logic
-- Assisted in implementing core functionality
-- Collaborated with team members using GitHub
-- Helped test and debug the application
 
 ---
 
 ## How to Run the Project
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/widadfatimakhan/DBMS-Project.git
-
+```bash
+git clone https://github.com/widadfatimakhan/DBMS-Project.git
