@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>396</width>
+    <height>269</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QTextEdit" name="textEdit">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>40</y>
+      <width>321</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="html">
+     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Google Sans,Arial,sans-serif'; color:#1f1f1f; background-color:#ffffff;&quot;&gt;In the 1990s, Sonny Hayes was Formula 1's most promising driver until an accident on the track nearly ended his career. Thirty years later, the owner of a struggling Formula 1 team convinces Sonny to return to racing and become the best in the world. Driving alongside the team's hotshot rookie, Sonny soon learns that the road to redemption is not something you can travel alone.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Google Sans,Arial,sans-serif'; color:#1f1f1f;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; font-weight:696; color:#1f1f1f;&quot;&gt;Producers: &lt;/span&gt;&lt;a href=&quot;https://www.google.com/search?sca_esv=ccc88b753bb383cd&amp;amp;rlz=1C1CHZN_enPK1149PK1149&amp;amp;sxsrf=AE3TifPUyNadKSyOBaBVOfXjWzYp_xJ5GA:1758524154283&amp;amp;q=Brad+Pitt&amp;amp;si=AMgyJEvmed8FkyEkpEJ8jfGhZkakcy5kQho_c4G-QJRdklshMhaCYsSU-jVC8W-MUGHOSiYzoFcH45DPKrUTiYS2MacMAUNMckTcpXvA6FZZzKM9ONPoTqQcontN4IMWqwWwYiVjD2L_ZuU3nK6HW_gE7UNUUDi2cPyXw2x8zkonMsgri8yCOk_P4HQOIbimhBHvDUNKOlxbbiE7seHX8bySZGpJBxg7_mOyLxe1esZNIGNgX5i-SETMc5amY4Jvb-wEPZyth-hiGTuXeku45Nd4ZDwe-UJXxQ%3D%3D&amp;amp;sa=X&amp;amp;ved=2ahUKEwiw4a385OuPAxWdVfEDHegJCHkQmxN6BAgaEAI&quot;&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; text-decoration: underline; color:#1a0dab;&quot;&gt;Brad Pitt&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; color:#474747;&quot;&gt;, &lt;/span&gt;&lt;a href=&quot;https://www.google.com/search?sca_esv=ccc88b753bb383cd&amp;amp;rlz=1C1CHZN_enPK1149PK1149&amp;amp;sxsrf=AE3TifPUyNadKSyOBaBVOfXjWzYp_xJ5GA:1758524154283&amp;amp;q=Lewis+Hamilton&amp;amp;si=AMgyJEveiRpRWbYSNPkEPxCUbItHSvun4xkRgDDPLmrOjDx35B-1mXTKO1CU8cG2e-AYu9IrKDORseTpr_vB5vsdGK_yMryWMqODkUniWQKUQ0mw2ogiu89Q4Hpcf2M5xoaa9R4XgNmBdZwHE2Xr7cJyKby8NWHIQ1cSbwQCfKwoCH1T15I1nL2qkoEgYireivku0pD9faS-1rjwo0W5NqiqV3nIQuhMatp-kB3cejQeMuSzqh6juWg9LbWzQ_TJgWI0dBpshcZHCUzgBG4Z1buy-cSsZgdsKm5toNsUJa4zWBAw8qrmyo4%3D&amp;amp;sa=X&amp;amp;ved=2ahUKEwiw4a385OuPAxWdVfEDHegJCHkQmxN6BAgaEAM&quot;&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; text-decoration: underline; color:#1a0dab;&quot;&gt;Lewis Hamilton&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; color:#474747;&quot;&gt;, &lt;/span&gt;&lt;a href=&quot;https://www.google.com/search?sca_esv=ccc88b753bb383cd&amp;amp;rlz=1C1CHZN_enPK1149PK1149&amp;amp;sxsrf=AE3TifPUyNadKSyOBaBVOfXjWzYp_xJ5GA:1758524154283&amp;amp;q=Joseph+Kosinski&amp;amp;si=AMgyJEtRPX4ld4pdQeltMBlsXK6YnLg9be4xryEBJwXFHLOO-KKFN5PHB5v5aEkuJZRzozRKthDsFVYrHVKCwWEfQ-fhPj8kYEqjvAU4F-dnNJ6RuVIQUPAzuG-5mN8tEEl5q_tuIW6FQvqqWpmZ6UdwMCRs9ZV3Z36tDtqSvYmObe1H-QA1cKprGjceN4E61HtE560X_ts68JPZbFV6xSLhMo_obYtxk7Br8x8_THaiAMWdDo92JJGTbxfGr2TE0owdAuj2Bb7t9f4MFu2_C4uEoxZp7oGfU5Gn1ObLCSkHZIEoN2BNNVE%3D&amp;amp;sa=X&amp;amp;ved=2ahUKEwiw4a385OuPAxWdVfEDHegJCHkQmxN6BAgaEAQ&quot;&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; text-decoration: underline; color:#1a0dab;&quot;&gt;Joseph Kosinski&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; color:#474747;&quot;&gt;, &lt;/span&gt;&lt;a href=&quot;https://www.google.com/search?sca_esv=ccc88b753bb383cd&amp;amp;rlz=1C1CHZN_enPK1149PK1149&amp;amp;sxsrf=AE3TifPUyNadKSyOBaBVOfXjWzYp_xJ5GA:1758524154283&amp;amp;q=Jerry+Bruckheimer&amp;amp;si=AMgyJEveiRpRWbYSNPkEPxCUbItHSvun4xkRgDDPLmrOjDx35AEEjY8S0C5AjXkjFmPpB01kXRM9JeJGpWYWtt3uE5WDLVFGthg0cQF2hBmm5mkBy1hOTbyL2zh8f9J83OgENO75MxbepYFYWf7DmS-dvSdsuZRhw-Pr-CpluhNmX-zY1DdzouAKC9N7xhkD3QS--h61TVM_DQVp52n8RpSRul0p-wmUz156ezNhY21zFxafz-_FnadFeSgNm_mTL65pvXzVKsZhpbT1aDnnKJQ6knDOL6eeW90WK6IyL_3-IRGRQ5Onqeg%3D&amp;amp;sa=X&amp;amp;ved=2ahUKEwiw4a385OuPAxWdVfEDHegJCHkQmxN6BAgaEAU&quot;&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; text-decoration: underline; color:#1a0dab;&quot;&gt;Jerry Bruckheimer&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; color:#474747;&quot;&gt;, &lt;/span&gt;&lt;a href=&quot;https://www.google.com/search?sca_esv=ccc88b753bb383cd&amp;amp;rlz=1C1CHZN_enPK1149PK1149&amp;amp;sxsrf=AE3TifPUyNadKSyOBaBVOfXjWzYp_xJ5GA:1758524154283&amp;amp;q=Chad+Oman&amp;amp;si=AMgyJEveiRpRWbYSNPkEPxCUbItHSvun4xkRgDDPLmrOjDx35BhR1gtyHKVahxi0ZsvjViJy_7lFjrGvHPBohMsnTho0-3rz36NghxJIHO1K4Yrn2JpLk6avm6ULAXmd1sXf2Y9PLcEQB-qIivsAvFam9efAan85z1S4GwvxwD3WbZ1HEHWDTbmXAM1pprQon9gc-T0ccZwK17e-FZ1arJtxILv5fICZanjU6eS7RrMIVfJRayzTf1nfPZG_cA1aziNCcdXCFZJUdS8Q8s8dHezR1bHeT7_F1A%3D%3D&amp;amp;sa=X&amp;amp;ved=2ahUKEwiw4a385OuPAxWdVfEDHegJCHkQmxN6BAgaEAY&quot;&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; text-decoration: underline; color:#1a0dab;&quot;&gt;Chad Oman&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; color:#474747;&quot;&gt;, &lt;/span&gt;&lt;a href=&quot;https://www.google.com/search?sca_esv=ccc88b753bb383cd&amp;amp;rlz=1C1CHZN_enPK1149PK1149&amp;amp;sxsrf=AE3TifPUyNadKSyOBaBVOfXjWzYp_xJ5GA:1758524154283&amp;amp;q=Dede+Gardner&amp;amp;si=AMgyJEveiRpRWbYSNPkEPxCUbItHSvun4xkRgDDPLmrOjDx35BDFPMX0QHhv0nD6MIJFcvMW0FLNkBhFsl8xkCbYUUDS95lyeihrF2HM2VvUigiDuFQDtSHyiKOu5hlvJzUWmXN-6kG9lszQ7uvzZmsC47X-owLhl8t26C_5pJEgvcOqsLw0iL59mZ7GryaOavCUJH40V385RcA60oYPoMNGIm-Yy3CXgp1-_VwBQjB3FXFSb1GRy2qmmmt0FQHAtRtCXCCnnR-AdWyj7YQZAjDEhsSfgVN6kxsVOvm4P-UF0kLj2mmNKx4%3D&amp;amp;sa=X&amp;amp;ved=2ahUKEwiw4a385OuPAxWdVfEDHegJCHkQmxN6BAgaEAc&quot;&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; text-decoration: underline; color:#1a0dab;&quot;&gt;Dede Gardner&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; color:#474747;&quot;&gt;, &lt;/span&gt;&lt;a href=&quot;https://www.google.com/search?sca_esv=ccc88b753bb383cd&amp;amp;rlz=1C1CHZN_enPK1149PK1149&amp;amp;sxsrf=AE3TifPUyNadKSyOBaBVOfXjWzYp_xJ5GA:1758524154283&amp;amp;q=Jeremy+Kleiner&amp;amp;si=AMgyJEtRPX4ld4pdQeltMBlsXK6YnLg9be4xryEBJwXFHLOO-DnFFpDupDgjFwfcAbVRNd7kqAFwnOuMqEH_2KqYb8FvLosBrsZ3OMk7l0tvbaa7lh561rda3wPUQKVDStECDD6lQ9entyregQOBzTYOci0_RczeX5cEkMprm3AbiFqtOER_gIgAa7ugY8DvrwUocWDeqBdARhX3OYSf640CK6grzoH_kF0wOixacU5BBUyUfmJVBXHbX7lIFaQwC-NFAnQG9vDCbr9QsdOJKOYAaUS6UC9ukIBTtjVrf1dDRUqJuzuzaiE%3D&amp;amp;sa=X&amp;amp;ved=2ahUKEwiw4a385OuPAxWdVfEDHegJCHkQmxN6BAgaEAg&quot;&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; text-decoration: underline; color:#1a0dab;&quot;&gt;Jeremy Kleiner&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; line-height:22px; background-color:#ffffff;&quot;&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; font-weight:696; color:#1f1f1f;&quot;&gt;Running time: &lt;/span&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; color:#474747;&quot;&gt;2h 35m&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; line-height:22px; background-color:#ffffff;&quot;&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; font-weight:696; color:#1f1f1f;&quot;&gt;Production companies: &lt;/span&gt;&lt;a href=&quot;https://www.google.com/search?sca_esv=ccc88b753bb383cd&amp;amp;rlz=1C1CHZN_enPK1149PK1149&amp;amp;sxsrf=AE3TifPUyNadKSyOBaBVOfXjWzYp_xJ5GA:1758524154283&amp;amp;q=Plan+B+Entertainment&amp;amp;si=AMgyJEtRPX4ld4pdQeltMBlsXK6YnLg9be4xryEBJwXFHLOO-OHP69fIblclH5jdjf7gV-TdPBfHS1XKbPTEGEb8pmO5owSLzCXcCuz8Y_oELy-SBkwP5YjgwqFzZ3T_yq6rhEbhhDfABWC7EI7hCxlC5GS5vrALMKezqjDpSb465sXSBuoheBFkeywSpzOSeBrfnsYv2FVh2B5ntb8PlyAzctN7tbRSw3P00F2LS5JHso-DbzMedmRDrpqPFVt5e31qDwePAw7Xo3fj9E9gIbHopMxG3IT8LP84yvTo55y_a8Lc8PE7ktK1h6vh6peiE_U2JXK-0yB5&amp;amp;sa=X&amp;amp;ved=2ahUKEwiw4a385OuPAxWdVfEDHegJCHkQmxN6BAgeEAI&quot;&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; text-decoration: underline; color:#1a0dab;&quot;&gt;Plan B Entertainment&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; color:#474747;&quot;&gt;, &lt;/span&gt;&lt;a href=&quot;https://www.google.com/search?sca_esv=ccc88b753bb383cd&amp;amp;rlz=1C1CHZN_enPK1149PK1149&amp;amp;sxsrf=AE3TifPUyNadKSyOBaBVOfXjWzYp_xJ5GA:1758524154283&amp;amp;q=Dawn+Apollo+Films&amp;amp;si=AMgyJEs9DArPE9xmb5yVYVjpG4jqWDEKSIpCRSjmm88XZWnGNZm6Ad--BHZ9cbalDfVljH5qKSlhgRkyVjTJ0fjB-gZaoXPI59S6n7e3iCZmE-E3_gNWInv6iBcs2b8llhlIB9xbDtgdn5ny9jhPJcQ0tiE85Xiknjap-p0SRqhIWgc46HbMHygPXtDqibDPu0xhPudCTpXPqLd2BhLDPvWPkk2koVG9IPjjrMUBccSQHbQ19ar16N0g8RlyVDfNUmctsWsvMAuz-SoGT5v6hzHvkNpFrIuI_COPCZTx-ylKPJA2NlwdOW-cH6HdbFf42i36U0qwGl5C&amp;amp;sa=X&amp;amp;ved=2ahUKEwiw4a385OuPAxWdVfEDHegJCHkQmxN6BAgeEAM&quot;&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; text-decoration: underline; color:#1a0dab;&quot;&gt;Dawn Apollo Films&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; color:#474747;&quot;&gt;, &lt;/span&gt;&lt;a href=&quot;https://www.google.com/search?sca_esv=ccc88b753bb383cd&amp;amp;rlz=1C1CHZN_enPK1149PK1149&amp;amp;sxsrf=AE3TifPUyNadKSyOBaBVOfXjWzYp_xJ5GA:1758524154283&amp;amp;q=Jerry+Bruckheimer+Films&amp;amp;si=AMgyJEtRPX4ld4pdQeltMBlsXK6YnLg9be4xryEBJwXFHLOO-Gw8zbttDugjPRsejnqlsgJi9imstf4h1DAFw2rS_B8CU2ogPS5jE9gKqgUL_xazspqezhdbFzy8oOQ0hTz5Vz1kZJkFqaH8ASLis2oHV0Exa-NEWxTuh5AOonMbfvUQooxjwXdRhNthiALQbui8SgGwx-w0HDR75xLy6ffSC8JuwpSIVKClymJBqiGhU88iz_NYRGc61vjSrKLc4XzSp5495FTDXHm7acdiRs7qvxP_rcrERlU1ID4raLs9nqyd4gaFwRpAeDCvy2D4CoumJQDQcSvp&amp;amp;sa=X&amp;amp;ved=2ahUKEwiw4a385OuPAxWdVfEDHegJCHkQmxN6BAgeEAQ&quot;&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; text-decoration: underline; color:#1a0dab;&quot;&gt;Jerry Bruckheimer Films&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; color:#474747;&quot;&gt;, &lt;/span&gt;&lt;a href=&quot;https://www.google.com/search?sca_esv=ccc88b753bb383cd&amp;amp;rlz=1C1CHZN_enPK1149PK1149&amp;amp;sxsrf=AE3TifPUyNadKSyOBaBVOfXjWzYp_xJ5GA:1758524154283&amp;amp;q=Apple+Studios&amp;amp;si=AMgyJEs9DArPE9xmb5yVYVjpG4jqWDEKSIpCRSjmm88XZWnGNaCafplnUUhHwy9rqszdMDBX-kGmHzUTSPBCsT2OBLRn8utVGG6kJRK_1UcHT_lYSugTQ1MmCQKVcp5BCZkf5gCRnKpc332twY7ecNKPSV2y_LilCbgyCeG4YbVCE8ntC8D3NHA1VJ5quJ4T105ncMTWfDZqPwMBvbjV2zLkXU3KtkfTAONLsZxYDjEtPQq1uStQx1a_TexqURgGdRke_MBO2gjYVKGsN6oVILUyGZNP4-P_rV0vfk5eBkvlxOwKKjOqyEdKxrCI2DZm4pyNzoj9Tvdq&amp;amp;sa=X&amp;amp;ved=2ahUKEwiw4a385OuPAxWdVfEDHegJCHkQmxN6BAgeEAU&quot;&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; text-decoration: underline; color:#1a0dab;&quot;&gt;Apple Studios&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; color:#474747;&quot;&gt;, &lt;/span&gt;&lt;a href=&quot;https://www.google.com/search?sca_esv=ccc88b753bb383cd&amp;amp;rlz=1C1CHZN_enPK1149PK1149&amp;amp;sxsrf=AE3TifPUyNadKSyOBaBVOfXjWzYp_xJ5GA:1758524154283&amp;amp;q=Monolith+Pictures&amp;amp;si=AMgyJEs9DArPE9xmb5yVYVjpG4jqWDEKSIpCRSjmm88XZWnGNePeJ--Rn5Rk1HJU55ctN0J_yhNlOeNPpBVg9DePvls4zUfEk36yC8UVxHPf3E2CJGWJ1Fr6b_Dqro6cqFnKQogrpbHIRB-tiCeq2G2_yopf1sp5x81HprUTT6Shv0SXvgP65Rh3kJ0KUiFaOPhDWqcoT-jTk0gXCtfcywtfXhHkQgTgX-jJCqJ-BNsIHxoPASWEc_NbpGtXYRN882-CY6kcBa_ICHBHJI5NK7dq2786LNQdBqDa4RL0eGmOfuojjVczGuTIrZETJWc31OdCXgpRQ1JZ&amp;amp;sa=X&amp;amp;ved=2ahUKEwiw4a385OuPAxWdVfEDHegJCHkQmxN6BAgeEAY&quot;&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; text-decoration: underline; color:#1a0dab;&quot;&gt;Monolith Pictures&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; line-height:22px; background-color:#ffffff;&quot;&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; font-weight:696; color:#1f1f1f;&quot;&gt;Distributed by: &lt;/span&gt;&lt;a href=&quot;https://www.google.com/search?sca_esv=ccc88b753bb383cd&amp;amp;rlz=1C1CHZN_enPK1149PK1149&amp;amp;sxsrf=AE3TifPUyNadKSyOBaBVOfXjWzYp_xJ5GA:1758524154283&amp;amp;q=Apple&amp;amp;si=AMgyJEsDiSRjWbqzYFj-WWva_AB38rmr0hlaV8lJ7y-WQYnYXyP-9_zr04G7wq0XAj9lnBBmG9siy54pHamStYGHlmdvsOIyu2eG4uOO9LzGpOL3deSbvpO6N_iyKoL-pfg1N3EoOKHZ0-arzQ4NTir-KYEaq_7gHij6dkuFSRHYeGg9Q5-Io_HQbrjFMUp5c5MByKnRAYsi&amp;amp;sa=X&amp;amp;ved=2ahUKEwiw4a385OuPAxWdVfEDHegJCHkQmxN6BAglEAI&quot;&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; text-decoration: underline; color:#1a0dab;&quot;&gt;Apple&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; color:#474747;&quot;&gt;, &lt;/span&gt;&lt;a href=&quot;https://www.google.com/search?sca_esv=ccc88b753bb383cd&amp;amp;rlz=1C1CHZN_enPK1149PK1149&amp;amp;sxsrf=AE3TifPUyNadKSyOBaBVOfXjWzYp_xJ5GA:1758524154283&amp;amp;q=Apple+TV%2B&amp;amp;si=AMgyJEs9DArPE9xmb5yVYVjpG4jqWDEKSIpCRSjmm88XZWnGNdUYvRn2J6YpICFJXQvjQNEfS96DicK8UsVWODQQGZWayMTcq1_ef3oA9_eW2Z4uEH2BKnZWc0qkC5ABoQY9XDaoqHnyo8vnhN5VSDMdeESJ_3dTmtBnC6HemsGIlWzASwDAS8xvEHR_eQD_o6cpN72IVqVcZ7fClT0Cp8GeF7yKwwyT9w%3D%3D&amp;amp;sa=X&amp;amp;ved=2ahUKEwiw4a385OuPAxWdVfEDHegJCHkQmxN6BAglEAM&quot;&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; text-decoration: underline; color:#1a0dab;&quot;&gt;Apple TV+&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; color:#474747;&quot;&gt;, &lt;/span&gt;&lt;a href=&quot;https://www.google.com/search?sca_esv=ccc88b753bb383cd&amp;amp;rlz=1C1CHZN_enPK1149PK1149&amp;amp;sxsrf=AE3TifPUyNadKSyOBaBVOfXjWzYp_xJ5GA:1758524154283&amp;amp;q=Warner+Bros.+Pictures&amp;amp;si=AMgyJEs9DArPE9xmb5yVYVjpG4jqWDEKSIpCRSjmm88XZWnGNf6Bnw2bmN_Q_JzmkV0-OBFJJU6vt61AGACwcAYNmaPqY1puvV52IeLXmk4aOG7t79V_WvuzKaQWkRIpa8BlA8Y90_a0HZCZWRbuq9wj3UQIbaYStrhjBGmH0VVFd0ujj4uFwhOcrxK_PtatZp0l-FqNVTdHRXkwt6Bstzvt7PSomMhJF5wV7AdsxE7p2bppqjifm9o%3D&amp;amp;sa=X&amp;amp;ved=2ahUKEwiw4a385OuPAxWdVfEDHegJCHkQmxN6BAglEAQ&quot;&gt;&lt;span style=&quot; font-family:'Arial,sans-serif'; text-decoration: underline; color:#1a0dab;&quot;&gt;Warner Bros. Pictures&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>10</y>
+      <width>191</width>
+      <height>131</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">image: url(:/newPrefix/images/f1.jfif);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_4">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>61</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Return</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>396</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuDescription">
+    <property name="title">
+     <string>Description</string>
+    </property>
+   </widget>
+   <addaction name="menuDescription"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources>
+  <include location="../image.qrc"/>
+ </resources>
+ <connections/>
+</ui>
