@@ -39,11 +39,11 @@ This project demonstrates **GUI development, database integration, and customer 
 ![Admin Add Movie Screen](demo_images/add_movie.png)
 
 ### Customer Movie Selection
-![Movie Selection](images/customer_window.png)
+![Movie Selection](demo_images/customer_window.png)
 
 ### CUstomer's Ticket Generated
-![Ticket Booking](images/customer_ticket.png)
+![Ticket Booking](demo_images/customer_ticket.png)
 
 ### Customer's Booking History
-![Booking History](images/customer_view_booking.png)
+![Booking History](demo_images/customer_view_booking.png)
 
