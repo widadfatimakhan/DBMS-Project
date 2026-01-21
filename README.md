@@ -27,3 +27,23 @@ This project demonstrates **GUI development, database integration, and customer 
 - SQL Server / pyodbc
 - Qt Designer (UI design)
 - Git & GitHub
+
+---
+
+## Some Demo Screenshots
+
+### Admin Login Screen
+![Admin Login Screen](demo_images/admin_login.png)
+
+### Admin Add Movie Screen
+![Admin Add Movie Screen](demo_images/add_movie.png)
+
+### Customer Movie Selection
+![Movie Selection](images/customer_window.png)
+
+### CUstomer's Ticket Generated
+![Ticket Booking](images/customer_ticket.png)
+
+### Customer's Booking History
+![Booking History](images/customer_view_booking.png)
+
